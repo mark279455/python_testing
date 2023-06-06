@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import requests
+import calendar
 
 
 class Student:
@@ -9,7 +10,7 @@ class Student:
         self._first_name = first_name
         self._last_name = last_name
         self._start_date = date.today()
-        self.end_date = date.today() + timedelta(days=365)
+        self.end_date = date.today() + timedelta(days=self.days_to_add())
         self.naughty_list = False
 
     @property
@@ -34,3 +35,27 @@ class Student:
             return response.text
         else:
             return "There was an error requesting the course_schedule data"
+
+    @property
+    def start_date(self):
+        return self._start_date
+
+    @staticmethod
+    def is_leap_year(year):
+        return calendar.isleap(year)
+
+    def days_to_add(self):
+        addon = 365
+        day_of_year = int(self.start_date.strftime('%j'))
+        if day_of_year > 59:
+            if Student.is_leap_year(self.start_date.year) or Student.is_leap_year(self.start_date.year+1):
+                addon = 366
+        return addon
+
+
+def main():
+    student = Student("Fred", "Smith")
+    student.days_to_add()
+
+
+main()
